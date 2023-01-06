@@ -1,4 +1,5 @@
-const db = require("../db/models");
+const db = require("../models");
+
 const User = db.users;
 
 const Op = db.Sequelize.Op;
@@ -26,7 +27,7 @@ function verifyUser(req, res, next) {
   const { token } = req.params;
   const { email } = req.body;
 
-  User.findByPk(email)
+  User.findOne({ where: { email: email } })
     .then((user) => {
       if (user) {
         if (user.isVerified) {
@@ -59,7 +60,7 @@ function verifyUser(req, res, next) {
       } else {
         res.status(404).send({
           message:
-            "Email is invalid. Please check that you've registered with the correct email",
+            "Email not found. Please check that you've registered with the correct email",
         });
       }
     })

@@ -7,7 +7,7 @@ const apiRouter = require("./routes/api-router");
 
 app.use("/api", apiRouter);
 
-const db = require("./db/models");
+const db = require("./models");
 db.sequelize
   .sync()
   .then(() => {
