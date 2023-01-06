@@ -1,4 +1,3 @@
-//Express router middleware
 const apiRouter = require("express").Router();
 
 const usersRouter = require("./usersRouter");

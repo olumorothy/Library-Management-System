@@ -1,13 +1,24 @@
-const { insertNewUser, verifyNewuser } = require("../models/usersModel");
+const db = require("../db/models");
+const User = db.users;
+
+const Op = db.Sequelize.Op;
 
 function createNewUser(req, res, next) {
-  const { email, password, role } = req.body;
-
-  insertNewUser(email, password, role)
-    .then((user) => {
-      res.status(201).send({ user });
+  const { email, password, role, firstname, lastname, gender, dob } = req.body;
+  User.create({
+    email,
+    password,
+    role,
+    firstname,
+    lastname,
+    gender,
+    dob,
+  })
+    .then((data) => {
+      res.status(201).send({ data });
     })
     .catch((err) => {
+      console.log(err);
       next(err);
     });
 }
@@ -15,11 +26,45 @@ function verifyUser(req, res, next) {
   const { token } = req.params;
   const { email } = req.body;
 
-  verifyNewuser(email, token)
-    .then(() => {
-      res.status(200).send("Email verified! Please proceed to login");
+  User.findByPk(email)
+    .then((user) => {
+      if (user) {
+        if (user.isVerified) {
+          res.status(400).send({
+            message: "Account already verified!",
+          });
+        } else if (token !== "12345") {
+          res.status(400).send({
+            message: "Token is invalid",
+          });
+        } else {
+          User.update(
+            {
+              isVerified: true,
+            },
+            {
+              where: {
+                email: user.email,
+              },
+            }
+          )
+            .then((row) => {
+              res.status(200).send("Email verified! Please proceed to login");
+            })
+            .catch((err) => {
+              console.log(err);
+              next(err);
+            });
+        }
+      } else {
+        res.status(404).send({
+          message:
+            "Email is invalid. Please check that you've registered with the correct email",
+        });
+      }
     })
     .catch((err) => {
+      console.log(err);
       next(err);
     });
 }
