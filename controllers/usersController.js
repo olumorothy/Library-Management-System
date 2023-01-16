@@ -1,5 +1,5 @@
 const db = require("../models");
-
+const logger = require("../logs/logger");
 const User = db.users;
 
 const Op = db.Sequelize.Op;
@@ -19,7 +19,7 @@ function createNewUser(req, res, next) {
       res.status(201).send({ data });
     })
     .catch((err) => {
-      console.log(err);
+      logger.error("An error has occured: ", err);
       next(err);
     });
 }
@@ -53,7 +53,7 @@ function verifyUser(req, res, next) {
               res.status(200).send("Email verified! Please proceed to login");
             })
             .catch((err) => {
-              console.log(err);
+              logger.error("An error has occured: ", err);
               next(err);
             });
         }
@@ -65,7 +65,7 @@ function verifyUser(req, res, next) {
       }
     })
     .catch((err) => {
-      console.log(err);
+      logger.error("An error has occured: ", err);
       next(err);
     });
 }

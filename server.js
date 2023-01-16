@@ -1,4 +1,5 @@
 const express = require("express");
+const passport = require("passport");
 const app = express();
 
 app.use(express.json());
@@ -6,6 +7,8 @@ app.use(express.json());
 const apiRouter = require("./routes/api-router");
 
 app.use("/api", apiRouter);
+
+app.use(passport.initialize());
 
 const db = require("./models");
 db.sequelize
