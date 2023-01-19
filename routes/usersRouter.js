@@ -6,6 +6,7 @@ const userRouter = require("express").Router();
 const validation = require("../validators/validation");
 const { validate } = require("../validators/validationMiddleware");
 const logger = require("../logs/logger");
+const { ERROR_MSG } = require("../utils/const");
 
 userRouter.post(
   "/signup",
@@ -25,7 +26,7 @@ userRouter.post(
   function (req, res, next) {
     passport.authenticate("local-login", function (err, user, info) {
       if (err) {
-        logger.error("An error has occured: ", err);
+        logger.error(ERROR_MSG, err);
         return next(err);
       }
       if (!user) {
@@ -35,7 +36,7 @@ userRouter.post(
       }
       req.login(user, { session: false }, (err) => {
         if (err) {
-          logger.error("An error has occured: ", err);
+          logger.error(ERROR_MSG, err);
           return next(err);
         }
 

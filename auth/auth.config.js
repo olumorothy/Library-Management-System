@@ -1,6 +1,8 @@
 const LocalStrategy = require("passport-local");
 const logger = require("../logs/logger");
 const db = require("../models");
+const bcrypt = require("bcrypt");
+const { ERROR_MSG } = require("../utils/const");
 
 const User = db.users;
 
@@ -15,13 +17,17 @@ module.exports = (passport) => {
             if (!user) {
               return done(null, false, { message: "User not found" });
             }
-            if (user.password !== password) {
-              return done(null, false, { message: "Wrong Password" });
-            }
-            return done(null, user, { message: "Logged in Successfully!" });
+
+            bcrypt.compare(password, user.password).then((isMatch) => {
+              if (isMatch) {
+                return done(null, user, { message: "Logged in Successfully!" });
+              } else {
+                return done(null, false, { message: "Wrong Password" });
+              }
+            });
           })
           .catch((err) => {
-            logger.error("An error has occured ", err);
+            logger.error(ERROR_MSG, err);
             return done(err, false);
           });
       }
