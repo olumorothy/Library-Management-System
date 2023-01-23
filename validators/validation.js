@@ -14,3 +14,8 @@ exports.signUpSchema = Joi.object({
 exports.verifySchema = Joi.object({
   email: Joi.string().email().lowercase().required(),
 });
+
+exports.loginSchema = Joi.object({
+  email: Joi.string().email().lowercase().required(),
+  password: Joi.string().min(3).required(),
+});

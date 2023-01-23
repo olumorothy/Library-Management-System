@@ -1,25 +1,36 @@
 const db = require("../models");
-
+const logger = require("../logs/logger");
 const User = db.users;
-
-const Op = db.Sequelize.Op;
+const bcrypt = require("bcrypt");
+const saltRounds = 12;
+const { ERROR_MSG } = require("../utils/const");
 
 function createNewUser(req, res, next) {
   const { email, password, role, firstname, lastname, gender, dob } = req.body;
-  User.create({
-    email,
-    password,
-    role,
-    firstname,
-    lastname,
-    gender,
-    dob,
-  })
-    .then((data) => {
-      res.status(201).send({ data });
+
+  bcrypt
+    .hash(password, saltRounds)
+    .then((hash) => {
+      let password = hash;
+      User.create({
+        email,
+        password,
+        role,
+        firstname,
+        lastname,
+        gender,
+        dob,
+      })
+        .then((data) => {
+          res.status(201).send({ data });
+        })
+        .catch((err) => {
+          logger.error(ERROR_MSG, err);
+          next(err);
+        });
     })
     .catch((err) => {
-      console.log(err);
+      logger.error("Unable to hash password", err);
       next(err);
     });
 }
@@ -53,7 +64,7 @@ function verifyUser(req, res, next) {
               res.status(200).send("Email verified! Please proceed to login");
             })
             .catch((err) => {
-              console.log(err);
+              logger.error("An error has occured: ", err);
               next(err);
             });
         }
@@ -65,7 +76,7 @@ function verifyUser(req, res, next) {
       }
     })
     .catch((err) => {
-      console.log(err);
+      logger.error(ERROR_MSG, err);
       next(err);
     });
 }
