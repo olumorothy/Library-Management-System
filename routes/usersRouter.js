@@ -7,6 +7,7 @@ const validation = require("../validators/validation");
 const { validate } = require("../validators/validationMiddleware");
 const logger = require("../logs/logger");
 const { ERROR_MSG } = require("../utils/const");
+const config = require("../auth/config");
 
 userRouter.post(
   "/signup",
@@ -45,7 +46,7 @@ userRouter.post(
           email: req.user.email,
           role: req.user.role,
         };
-        const token = jwt.sign({ user: body }, "A_SECRET_KEY");
+        const token = jwt.sign({ user: body }, config.secret);
         return res.status(202).send({
           token: token,
           status: "Logged in successfully",

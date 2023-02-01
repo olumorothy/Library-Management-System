@@ -64,7 +64,7 @@ function verifyUser(req, res, next) {
               res.status(200).send("Email verified! Please proceed to login");
             })
             .catch((err) => {
-              logger.error("An error has occured: ", err);
+              logger.error(ERROR_MSG, err);
               next(err);
             });
         }
@@ -81,4 +81,8 @@ function verifyUser(req, res, next) {
     });
 }
 
-module.exports = { createNewUser, verifyUser };
+function adminPage(req, res, next) {
+  return res.status(200).send("Admin Content");
+}
+
+module.exports = { createNewUser, verifyUser, adminPage };

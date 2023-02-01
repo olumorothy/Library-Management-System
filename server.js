@@ -12,7 +12,7 @@ app.use(passport.initialize());
 
 const db = require("./models");
 db.sequelize
-  .sync()
+  .sync({ force: false }, { alter: false })
   .then(() => {
     console.log("Connection has been established successfully.");
   })
