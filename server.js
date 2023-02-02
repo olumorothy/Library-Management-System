@@ -1,5 +1,6 @@
 const express = require("express");
 const passport = require("passport");
+const Liquibase = require("liquibase").Liquibase;
 const app = express();
 
 app.use(express.json());
@@ -11,8 +12,23 @@ app.use("/api", apiRouter);
 app.use(passport.initialize());
 
 const db = require("./models");
+
+const POSTGRESQL_DEFAULT_CONFIG =
+  require("liquibase").POSTGRESQL_DEFAULT_CONFIG;
+
+const myConfig = {
+  ...POSTGRESQL_DEFAULT_CONFIG,
+  changeLogFile: "./resources/liquibase/db.changelog.xml",
+  url: "jdbc:postgresql://localhost:5432/lms",
+  username: "admin",
+  password: "",
+};
+const instTs = new Liquibase(myConfig);
+
+instTs.update();
+
 db.sequelize
-  .sync({ force: false }, { alter: false })
+  .authenticate()
   .then(() => {
     console.log("Connection has been established successfully.");
   })
