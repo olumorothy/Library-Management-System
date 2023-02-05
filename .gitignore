@@ -1,3 +1,5 @@
 node_modules
 logs/error.log
 logs/info.log
+.env
+keys/rsa.key.pub

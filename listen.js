@@ -7,15 +7,3 @@ app.listen(PORT, (err) => {
 
   logger.info(`Listening on ${PORT}...`);
 });
-
-// const liquibase = require('liquibase');
-
-// liquibase({
-//   changeLogFile: 'resources/liquibase/db.changelog.xml',
-//   url: 'jdbc:postgresql://localhost:5432/postgres',
-//   username: 'postgres',
-//   password: 'admin'
-// })
-// .run('<action>', '<action-params>')
-// .then(() => console.log('success'))
-// .catch((err) => console.log('fail', err));

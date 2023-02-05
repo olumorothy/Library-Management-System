@@ -13,19 +13,10 @@ app.use(passport.initialize());
 
 const db = require("./models");
 
-const POSTGRESQL_DEFAULT_CONFIG =
-  require("liquibase").POSTGRESQL_DEFAULT_CONFIG;
-
-const myConfig = {
-  ...POSTGRESQL_DEFAULT_CONFIG,
-  changeLogFile: "./resources/liquibase/db.changelog.xml",
-  url: "jdbc:postgresql://localhost:5432/lms",
-  username: "admin",
-  password: "",
-};
+const myConfig = require("./resources/liquibase/config");
 const instTs = new Liquibase(myConfig);
 
-instTs.update();
+instTs.status();
 
 db.sequelize
   .authenticate()

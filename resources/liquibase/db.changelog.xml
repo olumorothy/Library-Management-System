@@ -11,7 +11,7 @@
             />
          </column>
          <column name="email" type="VARCHAR(255)">
-            <constraints nullable="false"/>
+            <constraints nullable="false" unique="true" uniqueConstraintName="users_email_key"/>
         </column>
         <column name="password" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -43,14 +43,14 @@
    </changeSet>
    <changeSet author="moroti" id="202302021026">
         <createTable tableName="books">
-            <column autoIncrement="true" name="id" startWith="3" type="INTEGER">
+            <column autoIncrement="true" name="id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="books_pkey"/>
             </column>
             <column name="title" type="VARCHAR(100)">
                 <constraints nullable="false"/>
             </column>
             <column name="isbn" type="VARCHAR(10)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" unique="true" uniqueConstraintName="books_isbn_key"/>
             </column>
             <column name="author" type="VARCHAR(50)">
                 <constraints nullable="false"/>
@@ -64,9 +64,21 @@
             <column name="updatedAt" type="TIMESTAMP WITH TIME ZONE">
                 <constraints nullable="false"/>
             </column>
+             <column name="createdBy" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+             <column name="updatedBy" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+             <column name="totalNumber" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+             <column name="nosAvailable" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
-     <changeSet author="moroti" id="202302021029">
-        <addUniqueConstraint columnNames="email" constraintName="users_email_key" tableName="users"/>
-    </changeSet>
+   
 </databaseChangeLog>
+
+

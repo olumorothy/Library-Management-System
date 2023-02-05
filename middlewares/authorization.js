@@ -1,24 +1,26 @@
-const jwt = require("jsonwebtoken");
-const config = require("../auth/config");
+const { verifyToken } = require("../jwt");
 const logger = require("../logs/logger");
-const db = require("../models");
+
 const { ROLES } = require("../utils/const");
 
-verifyToken = (req, res, next) => {
+tokenVerification = (req, res, next) => {
+  console.log("In token verification");
   const token = req.headers["x-access-token"];
 
   if (!token) {
+    logger.error("No token provided");
     return res.status(403).send({ message: "No token provided" });
   }
 
-  jwt.verify(token, config.secret, (err, decodedString) => {
-    if (err) {
-      logger.error(err);
-      return res.status(401).send({ message: "Unauthorized!" });
-    }
-    req.role = decodedString.user.role;
-    next();
-  });
+  const verified = verifyToken(token);
+
+  if (!verified.user) {
+    return res.status(401).send({ message: "Unauthorized!" });
+  }
+
+  req.role = verified.user.role;
+  req.username = verified.user.fullname;
+  next();
 };
 
 isAdmin = (req, res, next) => {
@@ -31,7 +33,7 @@ isAdmin = (req, res, next) => {
 };
 
 const authorization = {
-  verifyToken,
+  tokenVerification,
   isAdmin,
 };
 

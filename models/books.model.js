@@ -25,6 +25,22 @@ module.exports = (sequelize) => {
       defaultValue: true,
       allowNull: false,
     },
+    nosAvailable: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    totalNumber: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    createdBy: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+    },
+    updatedBy: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+    },
   });
   return Book;
 };
