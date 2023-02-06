@@ -4,7 +4,6 @@ const logger = require("../logs/logger");
 const { ROLES } = require("../utils/const");
 
 tokenVerification = (req, res, next) => {
-  console.log("In token verification");
   const token = req.headers["x-access-token"];
 
   if (!token) {

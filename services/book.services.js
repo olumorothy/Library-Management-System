@@ -53,11 +53,12 @@ function fetchAllBooks(
   const filteredConditions = conditions.filter(
     (condition) => condition !== null
   );
+  console.log(filteredConditions);
 
   const query = filteredConditions.length
     ? {
         where: {
-          [operator.or]: filteredConditions,
+          [operator.and]: filteredConditions,
         },
         limit,
         offset,

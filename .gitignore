@@ -3,3 +3,4 @@ logs/error.log
 logs/info.log
 .env
 keys/rsa.key.pub
+keys/rsa.key
