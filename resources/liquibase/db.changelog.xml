@@ -78,6 +78,53 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet author="moroti" id="202302120924">  
+        <dropColumn   
+                columnName="createdBy"  
+                schemaName="public"  
+                tableName="books"/>   
+        <dropColumn 
+            columnName="updatedBy" 
+            schemaName="public"
+            tableName="books"/>  						
+    </changeSet>
+    
+    <changeSet id="202302120936" author="moroti">
+      <addColumn 
+          schemaName="public"
+          tableName="books">
+          <column name="createdBy" type="int"/>
+          <column name="updatedBy" type="int"/>
+      </addColumn>
+    </changeSet>
+
+    <changeSet id="202302121008" author="moroti">
+      <addForeignKeyConstraint baseColumnNames="createdBy"
+          baseTableName="books"
+          constraintName="fk_users_created_by"
+          onDelete="CASCADE"
+          onUpdate="RESTRICT"
+          referencedColumnNames="id"
+          referencedTableName="users"/>
+        <addForeignKeyConstraint baseColumnNames="updatedBy"
+            baseTableName="books"
+            constraintName="fk_users_updatedBy"
+            onDelete="CASCADE"
+            onUpdate="RESTRICT"
+            referencedColumnNames="id"
+            referencedTableName="users"/>
+        <addNotNullConstraint 
+            columnDataType="int"
+            columnName="createdBy"
+            schemaName="public"
+            tableName="books"/>
+        <addNotNullConstraint 
+            columnDataType="int"
+            columnName="updatedBy"
+            schemaName="public"
+            tableName="books"/>
+    </changeSet>
    
 </databaseChangeLog>
 

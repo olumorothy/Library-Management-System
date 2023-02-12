@@ -1,7 +1,10 @@
 const express = require("express");
+const cors = require("cors");
 const passport = require("passport");
-const Liquibase = require("liquibase").Liquibase;
+const liquibase = require("liquibase").Liquibase;
+
 const app = express();
+app.use(cors());
 
 app.use(express.json());
 
@@ -13,10 +16,10 @@ app.use(passport.initialize());
 
 const db = require("./models");
 
-const myConfig = require("./resources/liquibase/config");
-const instTs = new Liquibase(myConfig);
+const liquibaseConfig = require("./resources/liquibase/config");
+const liquibaseConnection = new liquibase(liquibaseConfig);
 
-instTs.status();
+liquibaseConnection.update();
 
 db.sequelize
   .authenticate()

@@ -39,23 +39,27 @@ function fetchAllBooks(
   author,
   isbn,
   createdBy,
-  isAvailable
+  isAvailable,
+  dateFrom,
+  dateTo
 ) {
   const { limit, offset } = getPagination(page, size);
+
   const conditions = [
     title ? { title: { [operator.iLike]: `%${title}%` } } : null,
     author ? { author: { [operator.iLike]: `%${author}%` } } : null,
     isbn ? { isbn: { [operator.iLike]: `%${isbn}%` } } : null,
     createdBy ? { createdBy: { [operator.iLike]: `%${createdBy}%` } } : null,
     isAvailable ? { isAvailable: isAvailable } : null,
+    dateFrom ? { createdAt: { [operator.gte]: dateFrom } } : null,
+    dateTo ? { createdAt: { [operator.lte]: dateTo } } : null,
   ];
 
   const filteredConditions = conditions.filter(
     (condition) => condition !== null
   );
-  console.log(filteredConditions);
 
-  const query = filteredConditions.length
+  let query = filteredConditions.length
     ? {
         where: {
           [operator.and]: filteredConditions,
@@ -67,6 +71,12 @@ function fetchAllBooks(
         limit,
         offset,
       };
+
+  if (dateFrom && dateTo) {
+    query.where.createdAt = {
+      [operator.between]: [dateFrom, dateTo],
+    };
+  }
 
   return Book.findAndCountAll(query)
     .then((data) => {

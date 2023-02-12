@@ -18,7 +18,7 @@ tokenVerification = (req, res, next) => {
   }
 
   req.role = verified.user.role;
-  req.username = verified.user.fullname;
+  req.id = verified.user.id;
   next();
 };
 

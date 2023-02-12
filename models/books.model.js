@@ -34,11 +34,11 @@ module.exports = (sequelize) => {
       allowNull: false,
     },
     createdBy: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     updatedBy: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
   });

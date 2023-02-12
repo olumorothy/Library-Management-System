@@ -5,8 +5,8 @@ const { ERROR_MSG } = require("../utils/const");
 
 function addBook(req, res, next) {
   const { title, isbn, author, totalNumber, nosAvailable } = req.body;
-  const createdBy = req.username;
-  const updatedBy = req.username;
+  const createdBy = req.id;
+  const updatedBy = req.id;
   createNewBook(
     title,
     isbn,
@@ -26,8 +26,28 @@ function addBook(req, res, next) {
 }
 
 function getAllBooks(req, res, next) {
-  const { page, size, title, author, isbn, createdBy, isAvailable } = req.query;
-  fetchAllBooks(page, size, title, author, isbn, createdBy, isAvailable)
+  const {
+    page,
+    size,
+    title,
+    author,
+    isbn,
+    createdBy,
+    isAvailable,
+    dateFrom,
+    dateTo,
+  } = req.query;
+  fetchAllBooks(
+    page,
+    size,
+    title,
+    author,
+    isbn,
+    createdBy,
+    isAvailable,
+    dateFrom,
+    dateTo
+  )
     .then((books) => {
       res.status(200).send({ books });
     })

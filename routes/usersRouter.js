@@ -46,7 +46,6 @@ userRouter.post(
           id: req.user.id,
           email: req.user.email,
           role: req.user.role,
-          fullname: req.user.firstname + " " + req.user.lastname,
         };
 
         const token = signToken({ user: body });
