@@ -1,3 +1,5 @@
 const ERROR_MSG = "An error has occured";
 
-exports.ERROR_MSG;
+const ROLES = { Admin: "admin", Student: "student" };
+
+module.exports = { ERROR_MSG, ROLES };

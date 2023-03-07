@@ -1,0 +1,131 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+   <changeSet id="202302020908" author="moroti">
+     <createTable tableName="users"
+             schemaName="public"
+             >
+         <column name="id" type="INTEGER" autoIncrement="true">
+            <constraints nullable="false"
+               primaryKey="true"
+               primaryKeyName="users_pkey"
+            />
+         </column>
+         <column name="email" type="VARCHAR(255)">
+            <constraints nullable="false" unique="true" uniqueConstraintName="users_email_key"/>
+        </column>
+        <column name="password" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="role" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="firstname" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="lastname" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="gender" type="VARCHAR(10)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="dob" type="date">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="false" name="isActive" type="BOOLEAN"/>
+            <column defaultValueBoolean="false" name="isVerified" type="BOOLEAN"/>
+            <column name="createdAt" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updatedAt" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+     </createTable>
+   </changeSet>
+   <changeSet author="moroti" id="202302021026">
+        <createTable tableName="books">
+            <column autoIncrement="true" name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="books_pkey"/>
+            </column>
+            <column name="title" type="VARCHAR(100)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="isbn" type="VARCHAR(10)">
+                <constraints nullable="false" unique="true" uniqueConstraintName="books_isbn_key"/>
+            </column>
+            <column name="author" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="true" name="isAvailable" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+            <column name="createdAt" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updatedAt" type="TIMESTAMP WITH TIME ZONE">
+                <constraints nullable="false"/>
+            </column>
+             <column name="createdBy" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+             <column name="updatedBy" type="VARCHAR(50)">
+                <constraints nullable="false"/>
+            </column>
+             <column name="totalNumber" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+             <column name="nosAvailable" type="INTEGER">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="moroti" id="202302120924">  
+        <dropColumn   
+                columnName="createdBy"  
+                schemaName="public"  
+                tableName="books"/>   
+        <dropColumn 
+            columnName="updatedBy" 
+            schemaName="public"
+            tableName="books"/>  						
+    </changeSet>
+    
+    <changeSet id="202302120936" author="moroti">
+      <addColumn 
+          schemaName="public"
+          tableName="books">
+          <column name="createdBy" type="int"/>
+          <column name="updatedBy" type="int"/>
+      </addColumn>
+    </changeSet>
+
+    <changeSet id="202302121008" author="moroti">
+      <addForeignKeyConstraint baseColumnNames="createdBy"
+          baseTableName="books"
+          constraintName="fk_users_created_by"
+          onDelete="CASCADE"
+          onUpdate="RESTRICT"
+          referencedColumnNames="id"
+          referencedTableName="users"/>
+        <addForeignKeyConstraint baseColumnNames="updatedBy"
+            baseTableName="books"
+            constraintName="fk_users_updatedBy"
+            onDelete="CASCADE"
+            onUpdate="RESTRICT"
+            referencedColumnNames="id"
+            referencedTableName="users"/>
+        <addNotNullConstraint 
+            columnDataType="int"
+            columnName="createdBy"
+            schemaName="public"
+            tableName="books"/>
+        <addNotNullConstraint 
+            columnDataType="int"
+            columnName="updatedBy"
+            schemaName="public"
+            tableName="books"/>
+    </changeSet>
+   
+</databaseChangeLog>
+
+

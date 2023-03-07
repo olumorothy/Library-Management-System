@@ -19,3 +19,10 @@ exports.loginSchema = Joi.object({
   email: Joi.string().email().lowercase().required(),
   password: Joi.string().min(3).required(),
 });
+exports.addBookSchema = Joi.object({
+  title: Joi.string().required().max(100),
+  isbn: Joi.string().required().max(10).min(10),
+  author: Joi.string().min(2).max(50).required(),
+  totalNumber: Joi.number().required(),
+  nosAvailable: Joi.number().required(),
+});
