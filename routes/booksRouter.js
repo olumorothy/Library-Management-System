@@ -1,4 +1,9 @@
-const { addBook, getAllBooks } = require("../controllers/BooksController");
+const {
+  addBook,
+  getAllBooks,
+  borrowBook,
+  getAllBorrowedBooks,
+} = require("../controllers/BooksController");
 const validation = require("../validators/validation");
 const authorization = require("../middlewares/authorization");
 const { validate } = require("../validators/validationMiddleware");
@@ -16,6 +21,14 @@ bookRouter.get(
   "/allbooks",
   [authorization.tokenVerification, authorization.isAdmin],
   getAllBooks
+);
+
+bookRouter.post("/borrow/:id", authorization.tokenVerification, borrowBook);
+
+bookRouter.get(
+  "/borrowedBooks",
+  authorization.tokenVerification,
+  getAllBorrowedBooks
 );
 
 module.exports = bookRouter;

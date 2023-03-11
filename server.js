@@ -19,7 +19,7 @@ const db = require("./models");
 const liquibaseConfig = require("./resources/liquibase/config");
 const liquibaseConnection = new liquibase(liquibaseConfig);
 
-liquibaseConnection.update();
+liquibaseConnection.status();
 
 db.sequelize
   .authenticate()
