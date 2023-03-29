@@ -169,6 +169,20 @@
             oldColumnName="book_id"
             tableName="borrowings"/>
     </changeSet> 
+
+    <changeSet id="moroti" author="202303291726">
+        <renameColumn 
+            columnDataType="int"
+            newColumnName="lastUpdatedBy"
+            oldColumnName="updatedBy"
+            tableName="borrowings"/>
+
+        <addColumn 
+            schemaName="public"
+            tableName="borrowings">
+            <column name="dueDate" type="datetime"/>
+        </addColumn>
+    </changeSet>
    
 </databaseChangeLog>
 

@@ -1,7 +1,12 @@
 const logger = require("../logs/logger");
 const db = require("../models");
 const ERROR_MSG = require("../utils/const");
-const { getPagination, getPagingData } = require("../utils/helper");
+const {
+  getPagination,
+  getPagingData,
+  getReturnedDate,
+  getDueDate,
+} = require("../utils/helper");
 const Book = db.books;
 const User = db.users;
 const Borrowing = db.borrowings;
@@ -92,29 +97,25 @@ function fetchAllBooks(
     });
 }
 
-async function createBorrowing(book_id, user_id, updatedBy, nosAvailable) {
-  let transaction;
+async function createBorrowing(book_id, user_id, lastUpdatedBy, nosAvailable) {
+  const dueDate = getDueDate();
   try {
-    transaction = await sequelize.transaction();
+    return await sequelize.transaction(async function (transaction) {
+      const borrow = await Borrowing.create(
+        { bookId: book_id, userId: user_id, lastUpdatedBy, dueDate },
+        { transaction }
+      );
 
-    const borrow = await Borrowing.create(
-      { bookId: book_id, userId: user_id, updatedBy },
-      { transaction }
-    );
+      await Book.update(
+        { nosAvailable: nosAvailable - 1 },
+        { where: { id: book_id } },
+        { transaction }
+      );
 
-    await Book.update(
-      { nosAvailable: nosAvailable - 1 },
-      { where: { id: book_id } },
-      { transaction }
-    );
-
-    await transaction.commit();
-    return borrow;
+      return borrow;
+    });
   } catch (err) {
     logger.error(ERROR_MSG, err);
-    if (transaction) {
-      await transaction.rollback();
-    }
   }
 }
 

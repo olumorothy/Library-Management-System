@@ -67,12 +67,12 @@ function borrowBook(req, res, next) {
   const book_id = req.params.id;
 
   const user_id = req.id;
-  const updatedBy = req.id;
+  const lastUpdatedBy = req.id;
 
   fetchBookById(book_id)
     .then((book) => {
       if (book.isAvailable) {
-        createBorrowing(book_id, user_id, updatedBy, book.nosAvailable)
+        createBorrowing(book_id, user_id, lastUpdatedBy, book.nosAvailable)
           .then((borrow) => {
             res.status(201).send({ borrow });
           })

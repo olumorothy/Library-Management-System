@@ -8,13 +8,21 @@ module.exports = (sequelize) => {
       autoIncrement: true,
       primaryKey: true,
     },
-    updatedBy: {
+    lastUpdatedBy: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
     returned_date: {
       type: DataTypes.DATE,
       allowNull: true,
+    },
+    isReturned: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    dueDate: {
+      type: DataTypes.DATE,
+      allowNull: false,
     },
   });
 
