@@ -1,6 +1,12 @@
 const logger = require("../logs/logger");
 
-const { fetchAllBooks, createNewBook } = require("../services/book.services");
+const {
+  fetchAllBooks,
+  createNewBook,
+  fetchBookById,
+  createBorrowing,
+  fetchAllBorrowedBooks,
+} = require("../services/book.services");
 const { ERROR_MSG } = require("../utils/const");
 
 function addBook(req, res, next) {
@@ -57,4 +63,43 @@ function getAllBooks(req, res, next) {
     });
 }
 
-module.exports = { addBook, getAllBooks };
+function borrowBook(req, res, next) {
+  const book_id = req.params.id;
+
+  const user_id = req.id;
+  const lastUpdatedBy = req.id;
+
+  fetchBookById(book_id)
+    .then((book) => {
+      if (book.isAvailable) {
+        createBorrowing(book_id, user_id, lastUpdatedBy, book.nosAvailable)
+          .then((borrow) => {
+            res.status(201).send({ borrow });
+          })
+          .catch((err) => {
+            next(err);
+          });
+      } else {
+        return res.status(204).send({ message: "Book is not available" });
+      }
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+function getAllBorrowedBooks(req, res, next) {
+  const { page, size } = req.query;
+  const user_id = req.id;
+  const role = req.role;
+
+  fetchAllBorrowedBooks(user_id, role, page, size)
+    .then((data) => {
+      res.status(200).send({ data });
+    })
+    .catch((err) => {
+      next(err);
+    });
+}
+
+module.exports = { addBook, getAllBooks, borrowBook, getAllBorrowedBooks };

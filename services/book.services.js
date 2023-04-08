@@ -1,9 +1,17 @@
 const logger = require("../logs/logger");
 const db = require("../models");
 const ERROR_MSG = require("../utils/const");
-const { getPagination, getPagingData } = require("../utils/helper");
+const {
+  getPagination,
+  getPagingData,
+  getReturnedDate,
+  getDueDate,
+} = require("../utils/helper");
 const Book = db.books;
+const User = db.users;
+const Borrowing = db.borrowings;
 const operator = db.Sequelize.Op;
+const { sequelize } = require("../models");
 
 function createNewBook(
   title,
@@ -89,4 +97,70 @@ function fetchAllBooks(
     });
 }
 
-module.exports = { createNewBook, fetchAllBooks };
+async function createBorrowing(book_id, user_id, lastUpdatedBy, nosAvailable) {
+  const dueDate = getDueDate();
+  try {
+    return await sequelize.transaction(async function (transaction) {
+      const borrow = await Borrowing.create(
+        { bookId: book_id, userId: user_id, lastUpdatedBy, dueDate },
+        { transaction }
+      );
+
+      await Book.update(
+        { nosAvailable: nosAvailable - 1 },
+        { where: { id: book_id } },
+        { transaction }
+      );
+
+      return borrow;
+    });
+  } catch (err) {
+    logger.error(ERROR_MSG, err);
+  }
+}
+
+function fetchBookById(book_id) {
+  return Book.findOne({ where: { id: book_id } }).then((book) => {
+    if (book) {
+      return book;
+    } else {
+      return Promise.reject({ status: 404, msg: "Book not found" });
+    }
+  });
+}
+
+function fetchAllBorrowedBooks(user_id, role, page, size) {
+  const { limit, offset } = getPagination(page, size);
+  let condition = { userId: user_id };
+  if (role === "admin") {
+    condition = {};
+  }
+  return Borrowing.findAndCountAll({
+    include: [
+      {
+        model: Book,
+        attributes: ["title", "isbn"],
+        as: "book",
+      },
+      {
+        model: User,
+        attributes: ["email", "firstname", "lastname"],
+        as: "user",
+      },
+    ],
+    where: condition,
+    limit,
+    offset,
+  }).then((data) => {
+    const response = getPagingData(data, page, limit);
+    return response;
+  });
+}
+
+module.exports = {
+  createNewBook,
+  fetchAllBooks,
+  fetchBookById,
+  createBorrowing,
+  fetchAllBorrowedBooks,
+};

@@ -41,6 +41,7 @@
             </column>
      </createTable>
    </changeSet>
+
    <changeSet author="moroti" id="202302021026">
         <createTable tableName="books">
             <column autoIncrement="true" name="id" type="INTEGER">
@@ -124,6 +125,63 @@
             columnName="updatedBy"
             schemaName="public"
             tableName="books"/>
+    </changeSet>
+
+    <changeSet id="202309030849" author="moroti">
+      <createTable tableName="borrowings">
+          <column name="id" type="int" autoIncrement='true'>
+            <constraints primaryKey="true"/>
+          </column>
+          <column name="user_id" type="int">
+            <constraints references="users(id)" foreignKeyName="fk_borrowings_user_id"/>
+          </column>
+          <column name="book_id" type="int">
+            <constraints references="books(id)" foreignKeyName="fk_borrowings_book_id"/>
+          </column>
+           <column defaultValueBoolean="false" name="isReturned" type="BOOLEAN">
+                <constraints nullable="false"/>
+            </column>
+           <column name="returned_date" type="datetime" defaultValue="NULL">
+                <constraints nullable="true" />  
+           </column>
+            <column name="createdAt" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+           <column name="updatedAt" type="timestamp with time zone">
+                <constraints nullable="false"/>
+            </column>
+            <column name="updatedBy" type="int">
+                <constraints references="users(id)" foreignKeyName="fk_users_borrowing_updatedBy"/>
+            </column>
+
+      </createTable>
+    </changeSet>
+
+    <changeSet  author="moroti"  id="202303091953">  
+       <renameColumn 
+           columnDataType="int"
+           newColumnName="userId"
+           oldColumnName="user_id"
+           tableName="borrowings"/>
+        <renameColumn 
+            columnDataType="int"
+            newColumnName="bookId"
+            oldColumnName="book_id"
+            tableName="borrowings"/>
+    </changeSet> 
+
+    <changeSet id="moroti" author="202303291726">
+        <renameColumn 
+            columnDataType="int"
+            newColumnName="lastUpdatedBy"
+            oldColumnName="updatedBy"
+            tableName="borrowings"/>
+
+        <addColumn 
+            schemaName="public"
+            tableName="borrowings">
+            <column name="dueDate" type="datetime"/>
+        </addColumn>
     </changeSet>
    
 </databaseChangeLog>

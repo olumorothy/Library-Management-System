@@ -18,4 +18,9 @@ const getPagination = (page, size) => {
   };
 };
 
-module.exports = { getPagination, getPagingData };
+const getDueDate = () => {
+  const now = new Date();
+  return new Date(now.setDate(now.getDate() + 30));
+};
+
+module.exports = { getPagination, getPagingData, getDueDate };
