@@ -72,9 +72,13 @@ function borrowBook(req, res, next) {
   fetchBookById(book_id)
     .then((book) => {
       if (book.isAvailable) {
-        createBorrowing(book_id, user_id, lastUpdatedBy, book.nosAvailable)
+        createBorrowing(book, user_id, lastUpdatedBy, book.nosAvailable)
           .then((borrow) => {
-            res.status(201).send({ borrow });
+            res.status(201).json({
+              status: "success",
+              message: "Book has been order and Email confirmation sent",
+              data: borrow,
+            });
           })
           .catch((err) => {
             next(err);
