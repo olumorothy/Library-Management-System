@@ -17,6 +17,7 @@
     "joi": "^17.7.0",
     "jsonwebtoken": "^9.0.0",
     "liquibase": "^4.4.0",
+    "node-mailjet": "^6.0.2",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
     "pg": "^8.8.0",

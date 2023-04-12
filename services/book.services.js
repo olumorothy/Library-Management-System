@@ -1,17 +1,13 @@
 const logger = require("../logs/logger");
 const db = require("../models");
 const ERROR_MSG = require("../utils/const");
-const {
-  getPagination,
-  getPagingData,
-  getReturnedDate,
-  getDueDate,
-} = require("../utils/helper");
+const { getPagination, getPagingData, getDueDate } = require("../utils/helper");
 const Book = db.books;
 const User = db.users;
 const Borrowing = db.borrowings;
 const operator = db.Sequelize.Op;
 const { sequelize } = require("../models");
+const { sendBorrowBookEmail } = require("../utils/sendEmail");
 
 function createNewBook(
   title,
@@ -97,25 +93,33 @@ function fetchAllBooks(
     });
 }
 
-async function createBorrowing(book_id, user_id, lastUpdatedBy, nosAvailable) {
+async function createBorrowing(book, user_id, lastUpdatedBy, nosAvailable) {
   const dueDate = getDueDate();
+  const userInfo = await User.findByPk(user_id, {
+    attributes: ["firstname", "email"],
+  });
+
   try {
     return await sequelize.transaction(async function (transaction) {
       const borrow = await Borrowing.create(
-        { bookId: book_id, userId: user_id, lastUpdatedBy, dueDate },
+        { bookId: book.id, userId: user_id, lastUpdatedBy, dueDate },
         { transaction }
       );
 
       await Book.update(
         { nosAvailable: nosAvailable - 1 },
-        { where: { id: book_id } },
+        { where: { id: book.id } },
         { transaction }
       );
+
+      await sendBorrowBookEmail(userInfo, book, borrow);
 
       return borrow;
     });
   } catch (err) {
     logger.error(ERROR_MSG, err);
+
+    return Promise.reject({ status: 500, msg: "Internal Server Error" });
   }
 }
 
