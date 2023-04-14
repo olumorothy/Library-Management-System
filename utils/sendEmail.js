@@ -28,7 +28,7 @@ async function sendBorrowBookEmail(userInfo, book, borrow) {
         },
         To: [
           {
-            Email: "iseoluwa89@gmail.com",
+            Email: userInfo.email,
             Name: userInfo.firstname,
           },
         ],
