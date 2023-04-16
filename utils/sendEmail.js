@@ -1,12 +1,24 @@
 const logger = require("../logs/logger");
-const { ERROR_MSG } = require("./const");
+const { cloudinary } = require("../resources/cloudinary/cloudinary");
+const { ERROR_MSG, headerImg, footerImg, footer2 } = require("./const");
 
+const pug = require("pug");
 const mailjet = require("node-mailjet").apiConnect(
   process.env.MAILJET_APIKEY_PUBLIC,
   process.env.MAILJET_APIKEY_PRIVATE
 );
 
 async function sendBorrowBookEmail(userInfo, book, borrow) {
+  const borrowBookEmailTemplate = pug.compileFile("views/borrowBookEmail.pug");
+
+  const mail = borrowBookEmailTemplate({
+    userInfo: userInfo,
+    book: book,
+    borrow: borrow,
+    headerImg: cloudinary.url("Order_confirmation_pvxoua"),
+    footerImg: cloudinary.url("footer_ptpzrv"),
+  });
+
   const request = mailjet.post("send", { version: "v3.1" }).request({
     Messages: [
       {
@@ -22,27 +34,13 @@ async function sendBorrowBookEmail(userInfo, book, borrow) {
         ],
         Subject: "Book Order Confirmation",
         TextPart: ``,
-        HTMLPart: `
-              <div>Hello <b>${userInfo.firstname}</b>,</div>
-              <br/><div>Your order with Id ${borrow.id} has been confirmed.You can find details of your order below</div>
-              <br/>
-              <div>Book Title: <b>${book.title}</b></div>
-              <br/>
-              <div>Author: <b>${book.author}</b></div>
-              <br/>
-              <div>ISBN: <b>${book.isbn}</b></div>
-              <br/>
-              <div>Due Date: <b>${borrow.dueDate}</b></div>
-              <br/>
-              <div>Order Id: <b>${borrow.id}</b></div>
-            `,
+        HTMLPart: mail,
       },
     ],
   });
 
   try {
-    const result = await request;
-    console.log(result.body);
+    await request;
   } catch (err) {
     logger.error(ERROR_MSG, err);
     throw new Error({ error: err.statusCode });

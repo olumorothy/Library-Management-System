@@ -112,7 +112,7 @@ async function createBorrowing(book, user_id, lastUpdatedBy, nosAvailable) {
         { transaction }
       );
 
-      await sendBorrowBookEmail(userInfo, book, borrow);
+      sendBorrowBookEmail(userInfo, book, borrow);
 
       return borrow;
     });
