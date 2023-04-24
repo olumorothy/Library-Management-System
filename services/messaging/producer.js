@@ -10,24 +10,22 @@ const kafka = new Kafka({
 
 const producer = kafka.producer();
 
-const connect = async () => {
+const produce = async (message) => {
+  const serializedMessage = JSON.stringify(message);
   try {
     await producer.connect();
   } catch (connectionError) {
     logger.error("Error connecting to kafka :", connectionError);
   }
-};
 
-const produce = async (message) => {
-  const serializedMessage = JSON.stringify(message);
   try {
     await producer.send({
       topic,
       messages: [{ value: serializedMessage }],
     });
   } catch (producerError) {
-    logger.error("Error producing message :", producerError);
+    console.error("Error producing message :", producerError);
   }
 };
 
-module.exports = { produce, connect };
+module.exports = { produce };

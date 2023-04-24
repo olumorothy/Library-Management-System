@@ -7,7 +7,7 @@ const User = db.users;
 const Borrowing = db.borrowings;
 const operator = db.Sequelize.Op;
 const { sequelize } = require("../models");
-const { sendBorrowBookEmail } = require("../utils/sendEmail");
+
 const producer = require("./messaging/producer");
 
 function createNewBook(
@@ -122,13 +122,15 @@ async function createBorrowing(book, user_id, lastUpdatedBy, nosAvailable) {
       borrowedBook: borrow,
     };
 
-    await producer.connect();
     await producer.produce(allMessages);
 
     return borrow;
   } catch (err) {
     logger.error(ERROR_MSG, err);
-    return Promise.reject({ status: 500, msg: "Internal Server Error" });
+    return Promise.reject({
+      status: 500,
+      msg: "Unable to complete request at this time",
+    });
   }
 }
 
