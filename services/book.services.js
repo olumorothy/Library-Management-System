@@ -7,7 +7,8 @@ const User = db.users;
 const Borrowing = db.borrowings;
 const operator = db.Sequelize.Op;
 const { sequelize } = require("../models");
-const { sendBorrowBookEmail } = require("../utils/sendEmail");
+
+const producer = require("./messaging/producer");
 
 function createNewBook(
   title,
@@ -99,9 +100,11 @@ async function createBorrowing(book, user_id, lastUpdatedBy, nosAvailable) {
     attributes: ["firstname", "email"],
   });
 
+  let borrow;
+
   try {
-    return await sequelize.transaction(async function (transaction) {
-      const borrow = await Borrowing.create(
+    await sequelize.transaction(async function (transaction) {
+      borrow = await Borrowing.create(
         { bookId: book.id, userId: user_id, lastUpdatedBy, dueDate },
         { transaction }
       );
@@ -111,15 +114,23 @@ async function createBorrowing(book, user_id, lastUpdatedBy, nosAvailable) {
         { where: { id: book.id } },
         { transaction }
       );
-
-      sendBorrowBookEmail(userInfo, book, borrow);
-
-      return borrow;
     });
+
+    const allMessages = {
+      userData: userInfo,
+      bookData: book,
+      borrowedBook: borrow,
+    };
+
+    await producer.produce(allMessages);
+
+    return borrow;
   } catch (err) {
     logger.error(ERROR_MSG, err);
-
-    return Promise.reject({ status: 500, msg: "Internal Server Error" });
+    return Promise.reject({
+      status: 500,
+      msg: "Unable to complete request at this time",
+    });
   }
 }
 
