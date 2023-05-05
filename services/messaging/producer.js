@@ -1,7 +1,7 @@
 const { Kafka } = require("kafkajs");
 const logger = require("../../logs/logger");
 
-const topic = "email";
+let topic;
 
 const kafka = new Kafka({
   clientId: "lms",
@@ -10,8 +10,14 @@ const kafka = new Kafka({
 
 const producer = kafka.producer();
 
-const produce = async (message) => {
+const produce = async (message, newTopic) => {
   const serializedMessage = JSON.stringify(message);
+  if (newTopic === "email") {
+    topic = "email";
+  }
+  if (newTopic === "otp") {
+    topic = "otp";
+  }
   try {
     await producer.connect();
   } catch (connectionError) {
@@ -24,7 +30,7 @@ const produce = async (message) => {
       messages: [{ value: serializedMessage }],
     });
   } catch (producerError) {
-    console.error("Error producing message :", producerError);
+    logger.error("Error producing message :", producerError);
   }
 };
 

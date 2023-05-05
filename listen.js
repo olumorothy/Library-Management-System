@@ -1,5 +1,5 @@
 const { PORT = 9090 } = process.env;
-const app = require("./server.js");
+const app = require("./server");
 const logger = require("./logs/logger");
 
 app.listen(PORT, (err) => {

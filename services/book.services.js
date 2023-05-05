@@ -122,7 +122,7 @@ async function createBorrowing(book, user_id, lastUpdatedBy, nosAvailable) {
       borrowedBook: borrow,
     };
 
-    await producer.produce(allMessages);
+    await producer.produce(allMessages, "email");
 
     return borrow;
   } catch (err) {

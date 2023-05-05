@@ -16,7 +16,7 @@ userRouter.post(
   users.createNewUser
 );
 
-userRouter.post(
+userRouter.get(
   "/verify/:token",
   validate(validation.verifySchema),
   users.verifyUser
