@@ -57,7 +57,7 @@ async function verifyUser(req, res, next) {
       }
     }
   } else {
-    res.status(404).json({ message: "OTP not found" });
+    res.status(400).json({ message: "OTP not found" });
   }
 }
 

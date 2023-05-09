@@ -30,9 +30,10 @@ function addNewUser(email, password, role, firstname, lastname, gender, dob) {
             email,
             firstname,
             OTP,
+            messageType: "userSignup",
           };
           await redisClient.set("otp", OTP, { EX: 600, NX: true });
-          await producer.produce(messageContent, "otp");
+          await producer.produce(messageContent);
           return data;
         })
         .catch((err) => {

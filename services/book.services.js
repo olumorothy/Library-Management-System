@@ -116,13 +116,14 @@ async function createBorrowing(book, user_id, lastUpdatedBy, nosAvailable) {
       );
     });
 
-    const allMessages = {
+    const messageContent = {
       userData: userInfo,
       bookData: book,
       borrowedBook: borrow,
+      messageType: "bookBorrowed",
     };
 
-    await producer.produce(allMessages, "email");
+    await producer.produce(messageContent);
 
     return borrow;
   } catch (err) {
