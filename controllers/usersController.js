@@ -22,7 +22,8 @@ function createNewUser(req, res, next) {
 async function verifyUser(req, res, next) {
   const { token } = req.params;
   const { email } = req.body;
-  const OTP = await redisClient.get("otp");
+
+  const OTP = await redisClient.get(`${email}_otp`);
 
   if (OTP) {
     const oldUser = await User.findOne({ where: { email: email } });
