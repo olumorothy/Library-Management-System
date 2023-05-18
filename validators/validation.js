@@ -13,6 +13,7 @@ exports.signUpSchema = Joi.object({
 
 exports.verifySchema = Joi.object({
   email: Joi.string().email().lowercase().required(),
+  token: Joi.string().length(6).regex(/^\d+$/).required(),
 });
 
 exports.loginSchema = Joi.object({

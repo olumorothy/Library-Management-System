@@ -12,6 +12,7 @@ const producer = kafka.producer();
 
 const produce = async (message) => {
   const serializedMessage = JSON.stringify(message);
+
   try {
     await producer.connect();
   } catch (connectionError) {
@@ -24,7 +25,7 @@ const produce = async (message) => {
       messages: [{ value: serializedMessage }],
     });
   } catch (producerError) {
-    console.error("Error producing message :", producerError);
+    logger.error("Error producing message :", producerError);
   }
 };
 

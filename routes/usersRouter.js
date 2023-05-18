@@ -17,7 +17,7 @@ userRouter.post(
 );
 
 userRouter.post(
-  "/verify/:token",
+  "/verify/otp/registration",
   validate(validation.verifySchema),
   users.verifyUser
 );
