@@ -25,14 +25,17 @@ function addNewUser(email, password, role, firstname, lastname, gender, dob) {
       })
         .then(async (data) => {
           const OTP = nanoid.customAlphabet("1234567890", 6)();
-
+          const hashedOTP = await bcrypt.hash(OTP, saltRounds);
           const messageContent = {
             email,
             firstname,
             OTP,
             messageType: "userSignup",
           };
-          await redisClient.set(`${email}_otp`, OTP, { EX: 600, NX: true });
+          await redisClient.set(`${email}_verify_registration_otp`, hashedOTP, {
+            EX: 600,
+            NX: true,
+          });
           await producer.produce(messageContent);
           return data;
         })
